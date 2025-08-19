@@ -12,10 +12,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Chirper',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -35,10 +32,7 @@ class HomeScreen extends StatelessWidget {
             return const Center(
               child: Text(
                 'No posts yet. Be the first to chirp!',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             );
           }
@@ -53,7 +47,10 @@ class HomeScreen extends StatelessWidget {
               itemCount: postsProvider.posts.length,
               itemBuilder: (context, index) {
                 final post = postsProvider.posts[index];
-                return PostCard(post: post);
+                return PostCard(
+                  post: post,
+                  currentUserId: 'user_123',
+                ); // TODO: Replace with current user ID logic
               },
             ),
           );
@@ -86,7 +83,9 @@ class HomeScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               if (textController.text.trim().isNotEmpty) {
-                context.read<PostsProvider>().addPost(textController.text.trim());
+                context.read<PostsProvider>().addPost(
+                  textController.text.trim(),
+                );
                 Navigator.of(context).pop();
               }
             },
@@ -97,4 +96,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-

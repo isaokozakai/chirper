@@ -4,7 +4,7 @@ class Post {
   final String avatarUrl;
   final String content;
   final DateTime timestamp;
-  final int likes;
+  final Set<String> userLikes;
   final int retweets;
   final int replies;
 
@@ -14,10 +14,10 @@ class Post {
     required this.avatarUrl,
     required this.content,
     required this.timestamp,
-    this.likes = 0,
+    Set<String>? userLikes,
     this.retweets = 0,
     this.replies = 0,
-  });
+  }) : userLikes = userLikes ?? {};
 
   String get timeAgo {
     final now = DateTime.now();
@@ -33,5 +33,19 @@ class Post {
       return 'now';
     }
   }
-}
 
+  int get likes => userLikes.length;
+
+  Post copyWith({Set<String>? userLikes}) {
+    return Post(
+      id: id,
+      username: username,
+      avatarUrl: avatarUrl,
+      content: content,
+      timestamp: timestamp,
+      userLikes: userLikes ?? this.userLikes,
+      retweets: retweets,
+      replies: replies,
+    );
+  }
+}

@@ -5,14 +5,17 @@ import '../providers/posts_provider.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
+  final String currentUserId;
 
-  const PostCard({
-    super.key,
-    required this.post,
-  });
+  const PostCard({super.key, required this.post, required this.currentUserId});
 
   @override
   Widget build(BuildContext context) {
+    final postsProvider = context.watch<PostsProvider>();
+    final updatedPost = postsProvider.getPostById(post.id);
+
+    final isLiked = updatedPost.userLikes.contains(currentUserId);
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -48,35 +51,26 @@ class PostCard extends StatelessWidget {
                       ),
                       Text(
                         '@${post.username}',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                     ],
                   ),
                 ),
                 Text(
                   post.timeAgo,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            
+
             // Post content
             Text(
               post.content,
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.4,
-              ),
+              style: const TextStyle(fontSize: 16, height: 1.4),
             ),
             const SizedBox(height: 16),
-            
+
             // Action buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -96,10 +90,11 @@ class PostCard extends StatelessWidget {
                   },
                 ),
                 _buildActionButton(
-                  icon: Icons.favorite_border,
-                  label: post.likes.toString(),
+                  icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.red : null,
+                  label: updatedPost.likes.toString(),
                   onTap: () {
-                    context.read<PostsProvider>().likePost(post.id);
+                    postsProvider.toggleLike(post.id, currentUserId);
                   },
                 ),
                 _buildActionButton(
@@ -119,6 +114,7 @@ class PostCard extends StatelessWidget {
 
   Widget _buildActionButton({
     required IconData icon,
+    Color? color,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -130,19 +126,12 @@ class PostCard extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color: Colors.grey[600],
-            ),
+            Icon(icon, size: 20, color: color ?? Colors.grey[600]),
             if (label.isNotEmpty) ...[
               const SizedBox(width: 4),
               Text(
                 label,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ],
           ],
@@ -151,4 +140,3 @@ class PostCard extends StatelessWidget {
     );
   }
 }
-
